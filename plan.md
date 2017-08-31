@@ -1,3 +1,5 @@
+```
+
 1. Using Neural Network to Analzye MNIST 
 
 2. MNIST Dataset
@@ -34,6 +36,9 @@ Possible additions ( if possible )
   Visualization of changing weights and biases
   Tests between different learning rates or even activiation functions
   
+  
+  
+```
    
       
 
