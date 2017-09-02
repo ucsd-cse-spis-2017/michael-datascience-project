@@ -1,3 +1,8 @@
+The code is pretty nice already. I think given your current stage, once you get the sklearn's nn to work well for mnist, you can do the following
+1. test learning rate and different actuation function (other than sigmoid) to see how they affect accuracy. When you calcluate accuracy, do 10-fold cross validation which means you randomly pick 90% of the data as training and 10% as testing. Record the testing accuracy. Do this 10 times and calcualte the average accuracy. This will be the accuracy that you report
+2. Apply NN to other datasets. You can get other datasets such as malicious URL detection, and other datasets.
+3. Debug your own NN and see what goes wrong. This may take a while though.
+
 ```
 
 1. Using Neural Network to Analzye MNIST 
