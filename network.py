@@ -8,31 +8,28 @@ class Network(object):
         """ Initalizes the weights and biases with a random array
          according to a normal distribuation, with a mean of 0,
          and a variance of 1. The biases need only be taken from sizes[1:]
-         since there is no bias present in the first layer of the network. """
+         since there is no bias present in the first layer of the network. 
+         Similarly, the weights are only taken from layers after the first layer,
+         since weights serve as a connection between each layer of neurons. """
         self.num_layers = len(layers)
         self.sizes = layers
-        self.biases = [np.random.randn(y, 1) for y in layers[1:]]         # Creates an array representing all of the biases of each layer, 
-                                                                          # The input layer is not included when creating the bias array,
-                                                                          # since the bias is used to help calculate the output of a layer. 
+        self.biases = [np.random.randn(y, 1) for y in layers[1:]]         
         self.weights = [np.random.randn(y, x)
-                        for x, y in zip(layers[:-1], layers[1:])]         # Creates an array representing all of the weights between the nodes of each respective layer,
-                                                                          # There are no weights protruding out of the output layer.
+                        for x, y in zip(layers[:-1], layers[1:])]         
 
-
-
-
-    def forward_pass(self,a):
+    def forward_pass(self, a):
         """ Performs a forward pass through the neural network with input,
-        a, applying the sigmoid function at each node """
+        a, applying the activation function to each weighted input. In 
+        this case, we will be using the sigmoid function. """
         for w , b in zip(self.weights, self.biases):
             a = sigmoid(np.dot(w , a) + b)
         return a
 
     def SGD(self, batches, mini_batch_size, learning_rate, training_data, test_data = None):
-        """ Stochastic gradient descent takes small batches of the training
-        data, which will then be passed through the backpropagation algorithm.
-        New weights and biases will be generated, and the network will be updated
-        to reflect this. """
+        """ Stochastic gradient descent randomizes and passes through batches of
+        the training data, which will be used to train the network's weights and
+        biases using the backpropagation algorithm. The function also passes a learning
+        rate, which can be determined by the user. """
         if test_data:
             length_test = len(list(test_data))
         for i in range(batches):
@@ -66,25 +63,25 @@ class Network(object):
     
         self.weights = [ w - ( learning_rate / len(mini_batch)) * grad_w
                         for w , grad_w in zip(self.weights, grad_wrt_w)] 
-        #print("LOOK OVER HERE FAM UPDATE NET")
 
 
     def backpropagation(self, x, y):
         """ Takes in a tuple ( x , y ) and returns the gradients with respect to 
-        the biases and weights of the networks. These gradients will be later used
+        the biases and weights of the network. These gradients will be later used
         to update the network's biases and weights in preparation for the next
-        mini_batch of data. """
-
+        mini_batch of data. The function calculates these values for output layers
+        and hidden layers separately. The term backpropagation refers to how the
+        gradients are taken going backwards through the network. """
         grad_wrt_w = [np.zeros(w.shape) for w in self.weights]
         grad_wrt_b = [np.zeros(b.shape) for b in self.biases]
 
         activation = x
-        activations = [x]                                # activations refers to the weighted inputs of each respective level, after being passed through the sigmoid activation function
-        zs = []                                          # outputs refers the outputs of each respective level, excluding the sigmoid activation function
+        activations = [x]                                
+        zs = []                                          # zs refers to the weighted inputs for each layer of neurons
         for w, b in zip(self.weights, self.biases):
-            z = np.dot(w, activation) + b                # z can be visualized as a weighted input into a layer in the network
-            zs.append(z)
-            activation = sigmoid(z)
+            z = np.dot(w, activation) + b                # This loop stores the activations and weighted inputs at each layer,
+            zs.append(z)                                 # which will later be used to calculate the weight and bias gradients
+            activation = sigmoid(z)                      # at each layer. 
             activations.append(activation)
         ## The following variables account for when the activation is at an output layer.
         delta = self.cost_derivative(activations[-1], y) * deriv_sigmoid(zs[-1])
@@ -97,7 +94,7 @@ class Network(object):
             
             grad_wrt_b[-l] = delta
             grad_wrt_w[-l] = np.dot(delta, activations[-l-1].transpose())
-            #print("HEY IM OVER HERE BACKPROP")
+
         return(grad_wrt_b, grad_wrt_w)
     
     
@@ -106,9 +103,8 @@ class Network(object):
         throught the network. Then compares the final output from the
         forward pass with the correct label, y. Returns the amount of times 
         the network is correct in its evaluation of the image. """
-            test_results = [(np.argmax(self.forward_pass(x)), y) for (x , y) in test_data]
-            return sum(int(x == y) for (x , y) in test_results)
-            #print("EVALUATE XD")
+        test_results = [(np.argmax(self.forward_pass(x)), y) for (x , y) in test_data]          # checks if the vector ouputed by the network matches
+        return sum(int(x == y) for (x , y) in test_results)                                     # the vector representing the correct label. 
 
     
     def cost_derivative(self, out_activation, y):
@@ -126,4 +122,3 @@ def deriv_sigmoid(e):
         """ Derivative of sigmoid function, used in backpropagation """
         return (sigmoid(e)) * (1.0 - sigmoid(e))
         
-
