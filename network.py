@@ -38,10 +38,10 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_network(mini_batch, learning_rate)
             if test_data:
-                print ("Batch {0}  {1} / {2}".format(
+                print ("Epoch {0}  {1} / {2}".format(
                     i, self.evaluate_network(test_data), length_test))
             else:
-                print ("Batch {0} complete".format(i))
+                print ("Epoch {0} complete".format(i))
 
 
     def update_network(self, mini_batch, learning_rate):
